@@ -1,0 +1,46 @@
+{
+  "name": "lg-remote",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "bin": {
+    "scan": "find_tv.js",
+    "openweb": "open_web.js"
+  },
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "lgtv2": "^1.6.3",
+    "undici": "^5.29.0",
+    "webos-tv": "^0.2.0",
+    "ws": "^8.21.0"
+  },
+  "devDependencies": {
+    "electron": "^26.0.0",
+    "electron-builder": "^24.9.0"
+  },
+  "pkg": {
+    "assets": [],
+    "targets": [
+      "node18-win-x64"
+    ]
+  },
+  "build": {
+    "appId": "com.wizcheat.lgremote",
+    "productName": "LG-Remote",
+    "win": {
+      "target": "portable"
+    },
+    "files": [
+      "**/*"
+    ]
+  }
+}

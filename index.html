@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' https:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self';">
+    <title>LG Remote Pro</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #222; color: #fff; margin: 0; padding: 15px; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box; }
+        .top-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        button { background: #444; color: #fff; border: 1px solid #666; border-radius: 4px; padding: 10px; cursor: pointer; font-size: 14px; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #555; }
+        button:active { background: #666; }
+        
+        #startBtn { background: #dc3545; border-color: #bd2130; width: 100px; }
+        #startBtn.active { background: #28a745; border-color: #1e7e34; }
+        #connectBtn { background: #007bff; border-color: #0062cc; }
+        #tvIpInput { padding: 8px; border-radius: 4px; border: 1px solid #555; background: #333; color: #fff; flex: 1; font-size: 14px; }
+        
+        .main-container { display: flex; gap: 15px; flex: 1; min-height: 0; margin-bottom: 15px; }
+        .keypad-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 50%; height: 100%; }
+        .num-btn { font-size: 16px; background: #3a3a3a; }
+        .control-btn { background: #5c4084; border-color: #4b336c; }
+        
+        #trackpad {
+       flex: 1; 
+       background-color: #111;
+    
+        /* 🌟 เปลี่ยนมาใส่ลิงก์ Cloudflare Worker ของคุณตรงนี้ได้เลยครับ */
+        background-image: url('https://little-limit-a9f5.xxxcopyxx.workers.dev/?id=img1'); 
+    
+        background-size: contain;             
+        background-position: center;          
+        background-repeat: no-repeat;         
+        border: 2px dashed #555; 
+        border-radius: 8px; 
+       display: flex; 
+        align-items: center; 
+        justify-content: center; 
+       user-select: none; 
+        color: #888; 
+        font-weight: bold; 
+       text-align: center; 
+        padding: 10px; 
+        transition: 0.2s; 
+        }
+        #trackpad.active { border-color: #28a745; background-color: #152215; color: #28a745; }
+        
+        
+        .url-row { display: flex; gap: 10px; align-items: center; }
+        #webUrlInput { flex: 1; padding: 10px; border-radius: 4px; border: 1px solid #555; background: #333; color: #fff; font-size: 14px; }
+        #openWebBtn { background: #28a745; border-color: #1e7e34; padding: 10px 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="top-row">
+        <button id="startBtn">START</button>
+        <input type="text" id="tvIpInput" value="192.168.1.35">
+        <button id="connectBtn">CONNECT</button>
+    </div>
+
+    <div class="main-container">
+        <div class="keypad-grid">
+            <button class="num-btn" id="btn1" data-val="1">ปุ่ม 1</button>
+            <button class="num-btn" id="btn2" data-val="2">ปุ่ม 2</button>
+            <button class="num-btn" id="btn3" data-val="3">ปุ่ม 3</button>
+            <button class="num-btn" id="btn4" data-val="4">ปุ่ม 4</button>
+            <button class="num-btn" id="btn5" data-val="5">ปุ่ม 5</button>
+            <button class="num-btn" id="btn6" data-val="6">ปุ่ม 6</button>
+            <button class="num-btn" id="btn7" data-val="7">ปุ่ม 7</button>
+            <button class="num-btn" id="btn8" data-val="8">ปุ่ม 8</button>
+            <button class="num-btn" id="btn9" data-val="9">ปุ่ม 9</button>
+            <button class="control-btn" id="btnBack">ปุ่มกลับ</button>
+            <button class="num-btn" id="btn0" data-val="0">ปุ่ม 0</button>
+            <button class="control-btn" id="btnHome">ปุ่มโฮม</button>
+        </div>
+        
+        <div id="trackpad">พื้นที่ควบคุมพอยเตอร์เมาส์ (image1)</div>
+    </div>
+
+    <div class="url-row">
+        <input type="text" id="webUrlInput" placeholder="กรุณากรอก ที่อยู่ url ที่ต้องการเปิด เช่น youtube.com">
+        <button id="openWebBtn">เปิดลิ้งค์</button>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
