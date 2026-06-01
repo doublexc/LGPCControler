@@ -15,7 +15,7 @@ ws.on('open', () => {
         type: 'register',
         id: 'register_0',
         payload: {
-            'client-key': '679f29b0654d49a8d26006396cac4746', 
+            'client-key': ' ', 
             'manifest': {
                 'permissions': [
                     'LAUNCH', 'CONTROL_AUDIO', 'CONTROL_POWER', 'READ_INSTALLED_APPS',
@@ -100,4 +100,34 @@ global.sendClickCommand = () => {
   if (!pointerWs || pointerWs.readyState !== WebSocket.OPEN) return;
   pointerWs.send('type:button\nname:CLICK\n\n');
   pointerWs.send('type:button\nname:ENTER\n\n');
+};
+
+// ==========================================
+// 🔴 ฟังก์ชันปิดเครื่องทีวี
+// ==========================================
+global.sendPowerOffCommand = () => {
+  if (!ws || ws.readyState !== WebSocket.OPEN) return;
+  const payload = {
+    id: 'power_off_cmd',
+    type: 'request',
+    uri: 'ssap://system/turnOff'
+  };
+  ws.send(JSON.stringify(payload));
+};
+
+// ==========================================
+// 🔊 ฟังก์ชันเพิ่ม-ลดเสียง
+// ==========================================
+global.sendVolumeCommand = (action) => {
+  if (!ws || ws.readyState !== WebSocket.OPEN) return;
+  
+  // ตรวจสอบว่ากดปุ่ม up หรือ down แล้วเลือก uri ให้ถูก
+  const uri = action === 'up' ? 'ssap://audio/volumeUp' : 'ssap://audio/volumeDown';
+  
+  const payload = {
+    id: 'volume_cmd_' + action,
+    type: 'request',
+    uri: uri
+  };
+  ws.send(JSON.stringify(payload));
 };

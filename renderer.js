@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const startBtn = document.getElementById('startBtn');
   const connectBtn = document.getElementById('connectBtn');
   const tvIpInput = document.getElementById('tvIpInput');
   const trackpad = document.getElementById('trackpad');
@@ -8,10 +7,20 @@ document.addEventListener('DOMContentLoaded', () => {
   
   let isTvConnected = false;
 
-  // 1. ปุ่ม START สลับสถานะ UI
-  startBtn.addEventListener('click', () => {
-    startBtn.classList.toggle('active');
-    startBtn.textContent = startBtn.classList.contains('active') ? 'ACTIVE' : 'START';
+ // 1. ปุ่มปิดเครื่อง (แทนที่ START เดิม)
+  document.getElementById('powerOffBtn').addEventListener('click', () => {
+    if (confirm('คุณต้องการปิดทีวีใช่หรือไม่?')) {
+      window.ipcRenderer.send('power-off');
+    }
+  });
+
+  // ปุ่มเพิ่มลดเสียง
+  document.getElementById('btnVolUp').addEventListener('click', () => {
+    window.ipcRenderer.send('volume-control', 'up');
+  });
+  
+  document.getElementById('btnVolDown').addEventListener('click', () => {
+    window.ipcRenderer.send('volume-control', 'down');
   });
 
   // 2. ปุ่ม CONNECT สั่งสตาร์ทรีโมทและส่ง IP ไปหลังบ้าน
@@ -101,6 +110,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const dy = e.movementY;
     if (dx !== 0 || dy !== 0) {
       window.ipcRenderer.send('mouse-move', { dx: dx, dy: dy });
+    }
+  });
+
+  // ==========================================
+  // 🌟 ดักรับเลข IP จากระบบสแกนอัตโนมัติ (Auto-Scan)
+  // ==========================================
+  window.ipcRenderer.on('tv-found', (event, foundIp) => {
+    // 1. เปลี่ยนข้อความบนแทร็กแพดตามที่คุณต้องการ
+    trackpad.innerHTML = `IP ที่แนะนำคือ :<b style="color:#4CAF50; font-size:18px;">${foundIp}</b>`;
+    
+    // 2. [แถมฟีเจอร์หล่อๆ] ยัดเลข IP ลงช่องกรอกให้อัตโนมัติเลย จะได้ไม่ต้องพิมพ์เอง
+    if (tvIpInput.value === '') {
+      tvIpInput.value = foundIp;
     }
   });
 

@@ -1,7 +1,32 @@
 const { app, BrowserWindow, ipcMain } = require('electron'); // 🌟 หัวใจสำคัญ: ต้องมี ipcMain ตรงนี้!
 const path = require('path');
+const dgram = require('dgram');
 
 let remoteStarted = false;
+
+function scanForTV(win) {
+  console.log('🔍 [Auto-Scan] กำลังเริ่มสแกนหา LG TV ในวงแลน...');
+  const client = dgram.createSocket('udp4');
+  const ssdpQuery = 'M-SEARCH * HTTP/1.1\r\nHOST: 239.255.255.250:1900\r\nMAN: "ssdp:discover"\r\nMX: 3\r\nST: urn:schemas-upnp-org:device:MediaRenderer:1\r\n\r\n';
+  
+  client.send(Buffer.from(ssdpQuery), 0, ssdpQuery.length, 1900, '239.255.255.250');
+
+  client.on('message', (msg, rinfo) => {
+    const response = msg.toString();
+    if (response.includes('LG') || response.includes('WebOS') || response.includes('webOS')) {
+      console.log(`📺 [Auto-Scan] เจอทีวีแล้ว! ส่ง IP: ${rinfo.address} ไปที่หน้าบ้าน`);
+      
+      // ส่งเลข IP ทะลุท่อไปให้หน้าจอ UI
+      win.webContents.send('tv-found', rinfo.address); 
+      client.close();
+    }
+  });
+
+  // ปิดสแกนอัตโนมัติหลัง 10 วินาที เพื่อไม่ให้เปลืองทรัพยากร
+  setTimeout(() => {
+    try { client.close(); } catch(e) {}
+  }, 10000);
+}
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -23,6 +48,7 @@ function createWindow() {
 
   win.webContents.on('did-finish-load', () => {
     console.log('Renderer finished loading.');
+    scanForTV(win);
   });
 }
 
@@ -92,5 +118,21 @@ ipcMain.on('mouse-move', (event, data) => {
   console.log(`📐 [Terminal Check] เมาส์ขยับบนแทร็กแพด: dx=${data.dx}, dy=${data.dy}`);
   if (global.sendMouseMoveCommand && typeof global.sendMouseMoveCommand === 'function') {
     global.sendMouseMoveCommand(data.dx, data.dy);
+  }
+});
+
+// เช็กปุ่มปิดทีวี
+ipcMain.on('power-off', (event) => {
+  console.log(`🔴 [Terminal Check] สั่งปิดทีวี!`);
+  if (global.sendPowerOffCommand && typeof global.sendPowerOffCommand === 'function') {
+    global.sendPowerOffCommand();
+  }
+});
+
+// เช็กปุ่มเพิ่ม-ลดเสียง
+ipcMain.on('volume-control', (event, action) => {
+  console.log(`🔊 [Terminal Check] สั่งปรับเสียง: ${action}`);
+  if (global.sendVolumeCommand && typeof global.sendVolumeCommand === 'function') {
+    global.sendVolumeCommand(action);
   }
 });
